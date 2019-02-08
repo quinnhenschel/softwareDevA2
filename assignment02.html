@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            var canvas;
+            var context;
+            var player;
+            var x = 500;
+            var y = 100;
+            var playerRadius = 20;
+
+            window.onload = function() {
+                init();
+            };
+
+            function init()
+            {
+                canvas= document.getElementById("myCanvas");
+                context = canvas.getContext("2d");
+
+                playerGameObject = new gameObject(50,250,25,5,"blue");
+
+                enemy1GameObject = new gameObject(200,200,25,5,"red");
+                enemy2GameObject = new gameObject(450,300,25,5,"red");
+                enemy3GameObject = new gameObject(600,150,25,5,"red");
+
+                score1GameObject = new gameObject(300,50,10,0,"#dddd02");
+                score2GameObject = new gameObject(500,400,10,0,"#dddd02");
+
+                setInterval(gameLoop, 10);
+
+                window.addEventListener('keydown', function(event)
+                {
+                    KeyInput();
+                }, false);
+            }
+
+            function gameLoop()
+            {
+                processInput();
+                update();
+                draw();
+            }
+
+            function processInput()
+            {
+                if (detectCollision(playerGameObject, enemy1GameObject) == false)
+                {
+                    console.log("no collision");
+                }
+                else
+                {
+                    console.log("collision!");
+                }
+            }
+
+            function update()
+            {
+                //console.log(playerGameObject.xLocation)
+                //console.log(playerGameObject.yLocation)
+            }
+
+            function draw()
+            {
+                context.clearRect(0,0,canvas.width,canvas.height);
+                
+                playerGameObject.draw();
+
+                enemy1GameObject.draw();
+                enemy2GameObject.draw();
+                enemy3GameObject.draw();
+
+                score1GameObject.draw();
+                score2GameObject.draw();
+
+            }
+
+            function gameObject(xLocation, yLocation, radius, moveSpeed, colour)
+            {
+                this.xLocation = xLocation;
+                this.yLocation = yLocation;
+                this.radius = radius;
+                this.moveSpeed = moveSpeed;
+                this.colour = colour;
+
+                this.draw = function()
+                {
+                    context.beginPath();
+                    context.arc(this.xLocation, this.yLocation, this.radius, 0, 360, false);
+                    context.fillStyle = this.colour;
+                    context.fill();
+                }
+            }
+
+            function KeyInput()
+            {
+                switch (event.keyCode)
+                {
+                case 37: // Left
+                    playerGameObject.xLocation -= playerGameObject.moveSpeed;
+                    return 37;
+                    break;
+                case 38: // Up
+                    playerGameObject.yLocation -= playerGameObject.moveSpeed;
+                    break;
+                case 39: // Right
+                    playerGameObject.xLocation += playerGameObject.moveSpeed;
+                    break;
+                case 40: // Down
+                    playerGameObject.yLocation += playerGameObject.moveSpeed;
+                    break;
+                }
+            }
+
+            function detectCollision(circle1, circle2)
+            {
+                dx = circle2.xLocation - circle1.xLocation;
+                dy = circle2.yLocation - circle1.yLocation;
+                r = circle1.radius + circle2.radius;
+    
+                if (dx * dx + dy * dy < r * r)
+                {
+                    return true;
+                } 
+                return false;
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <h1>WELCOME TO THE GAME</h1>
+        <canvas id="myCanvas" width="800" height="500" style="border:1px solid #d3d3d3;"> Your browser does not support the HTML5 canvas tag.</canvas>
+        <p><button onclick="doTheThing()">Button to do something</button></p>
+    </body>
+
+</html>
