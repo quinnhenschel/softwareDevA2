@@ -4,46 +4,70 @@
         <script>
             var canvas;
             var context;
-            var player;
-            var x = 500;
-            var y = 100;
-            var playerRadius = 20;
+            var buttonPressed;
 
             window.onload = function() {
                 init();
             };
 
+            window.addEventListener('keydown', userInput, false);
+                // {
+                //     KeyInput();
+                //     userInput = KeyInput();
+                //     //console.log(userInput);
+                //     return userInput;
+                // }, 
+
+
+
             function init()
             {
                 canvas= document.getElementById("myCanvas");
                 context = canvas.getContext("2d");
+                buttonPressed = "null";
 
-                playerGameObject = new gameObject(50,250,25,5,"blue");
+                playerGameObject = new gameObject(50,250,25,5,1,"blue");
 
-                enemy1GameObject = new gameObject(200,200,25,5,"red");
-                enemy2GameObject = new gameObject(450,300,25,5,"red");
-                enemy3GameObject = new gameObject(600,150,25,5,"red");
+                enemy1GameObject = new gameObject(200,200,20,5,1,"red");
+                enemy2GameObject = new gameObject(450,300,20,5,1,"red");
+                enemy3GameObject = new gameObject(600,150,20,5,1,"red");
 
-                score1GameObject = new gameObject(300,50,10,0,"#dddd02");
-                score2GameObject = new gameObject(500,400,10,0,"#dddd02");
+                score1GameObject = new gameObject(300,50,10,0,1,"#dddd02");
+                score2GameObject = new gameObject(500,400,10,0,1,"#dddd02");
 
                 setInterval(gameLoop, 10);
+            }
 
-                window.addEventListener('keydown', function(event)
-                {
-                    KeyInput();
-                }, false);
+            function userInput(key)
+            {
+                if (key.keyCode == "37")
+                    buttonPressed = "left";
+
+                if (key.keyCode == "38")
+                    buttonPressed = "up";
+
+                if (key.keyCode == "39")
+                    buttonPressed = "right";
+     
+                if (key.keyCode == "40")
+                    buttonPressed = "down";
             }
 
             function gameLoop()
             {
-                processInput();
+                //collect userInput always happening
                 update();
                 draw();
             }
 
-            function processInput()
+            function update()
             {
+                playerGameObject.move();
+
+                enemy1GameObject.move();
+                enemy2GameObject.move();
+                enemy3GameObject.move();
+
                 if (detectCollision(playerGameObject, enemy1GameObject) == false)
                 {
                     console.log("no collision");
@@ -52,12 +76,6 @@
                 {
                     console.log("collision!");
                 }
-            }
-
-            function update()
-            {
-                //console.log(playerGameObject.xLocation)
-                //console.log(playerGameObject.yLocation)
             }
 
             function draw()
@@ -72,15 +90,15 @@
 
                 score1GameObject.draw();
                 score2GameObject.draw();
-
             }
 
-            function gameObject(xLocation, yLocation, radius, moveSpeed, colour)
+            function gameObject(xLocation, yLocation, radius, moveSpeed, moveDirection, colour)
             {
                 this.xLocation = xLocation;
                 this.yLocation = yLocation;
                 this.radius = radius;
                 this.moveSpeed = moveSpeed;
+                this.moveDirection = moveDirection;
                 this.colour = colour;
 
                 this.draw = function()
@@ -90,27 +108,46 @@
                     context.fillStyle = this.colour;
                     context.fill();
                 }
-            }
 
-            function KeyInput()
-            {
-                switch (event.keyCode)
+                this.move = function()
                 {
-                case 37: // Left
-                    playerGameObject.xLocation -= playerGameObject.moveSpeed;
-                    return 37;
-                    break;
-                case 38: // Up
-                    playerGameObject.yLocation -= playerGameObject.moveSpeed;
-                    break;
-                case 39: // Right
-                    playerGameObject.xLocation += playerGameObject.moveSpeed;
-                    break;
-                case 40: // Down
-                    playerGameObject.yLocation += playerGameObject.moveSpeed;
-                    break;
+                    if(buttonPressed == "left")
+                    {
+                        playerGameObject.xLocation -= 5;
+                        buttonPressed = "null";
+                    }
+
+                    if (buttonPressed == "up")
+                    {
+                        playerGameObject.yLocation -= 5;
+                        buttonPressed = "null";
+                    }
+
+                    if (buttonPressed == "right")
+                    {
+                        playerGameObject.xLocation += 5;
+                        buttonPressed = "null";
+                    }
+
+                    if (buttonPressed == "down")
+                    {
+                        playerGameObject.yLocation += 5;
+                        buttonPressed = "null";
+                    }
+
+                    if(this.colour == "red")
+                    {
+                        this.yLocation = this.yLocation + moveSpeed;
+                        if(this.yLocation > 445)
+                        {
+                            this.yLocation = 430;
+                            this.moveSpeed = -5;
+                        }
+
+                    }
                 }
             }
+
 
             function detectCollision(circle1, circle2)
             {
@@ -125,13 +162,29 @@
                 return false;
             }
 
+            // function insideGameArea(object)
+            // {
+            //     if (55 < object.xLocation < 745 && 55 < object.yLocation < 445)
+            //     {
+            //         return true;
+            //         console.log("true")
+            //     }
+            //     else
+            //     {
+            //         return false;
+            //     }
+            // }
+
+  
+
         </script>
     </head>
 
     <body>
         <h1>WELCOME TO THE GAME</h1>
         <canvas id="myCanvas" width="800" height="500" style="border:1px solid #d3d3d3;"> Your browser does not support the HTML5 canvas tag.</canvas>
-        <p><button onclick="doTheThing()">Button to do something</button></p>
+        <p><button onclick="doTheThing()">Restart</button></p>
     </body>
 
 </html>
+ 
